@@ -105,6 +105,15 @@ func turnRight(detail RobotDetails) RobotDetails {
 	val.facing = newDirection[val.facing]
 	return val
 }
+
+func moveInDirection(detail RobotDetails) RobotDetails {
+	val := NewRobotDetails(detail.position, detail.facing)
+	xadd := []int64{0, 1, 0, -1}
+	yadd := []int64{1, 0, -1, 0}
+	val.position.xpos = val.position.xpos + xadd[val.facing]
+	val.position.ypos = val.position.ypos + yadd[val.facing]
+	return val
+}
 func (sm *StateMachine) setState(s State) {
 	sm.currentState = s
 	sm.currentState.Enter()

@@ -91,3 +91,48 @@ func TestTurnRightStartWest(t *testing.T) {
 		t.Errorf("Expected Left turn result %+v different from result  position %+v", expected, result)
 	}
 }
+
+func TestMoveNorth(t *testing.T) {
+	pos := NewRobotPosition(10, 10)
+	northFacing := NewRobotDetails(pos, North)
+	result := moveInDirection(northFacing)
+
+	expectedPos := NewRobotPosition(10, 11)
+	expected := NewRobotDetails(expectedPos, North)
+	if expected != result {
+		t.Errorf("Expected Left turn result %+v different from result  position %+v", expected, result)
+	}
+}
+
+func TestMoveEast(t *testing.T) {
+	pos := NewRobotPosition(10, 10)
+	eastFacing := NewRobotDetails(pos, East)
+	result := moveInDirection(eastFacing)
+	expectedPos := NewRobotPosition(11, 10)
+	expected := NewRobotDetails(expectedPos, East)
+	if expected != result {
+		t.Errorf("Expected Left turn result %+v different from result  position %+v", expected, result)
+	}
+}
+
+func TestMoveSouth(t *testing.T) {
+	pos := NewRobotPosition(10, 10)
+	southFacing := NewRobotDetails(pos, South)
+	result := moveInDirection(southFacing)
+	expectedPos := NewRobotPosition(10, 9)
+	expected := NewRobotDetails(expectedPos, South)
+	if expected != result {
+		t.Errorf("Expected Left turn result %+v different from result  position %+v", expected, result)
+	}
+}
+
+func TestMoveWest(t *testing.T) {
+	pos := NewRobotPosition(10, 10)
+	westFacing := NewRobotDetails(pos, West)
+	result := moveInDirection(westFacing)
+	expectedPos := NewRobotPosition(9, 10)
+	expected := NewRobotDetails(expectedPos, West)
+	if expected != result {
+		t.Errorf("Expected Left turn result %+v different from result  position %+v", expected, result)
+	}
+}
