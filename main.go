@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 type State interface {
@@ -39,7 +38,7 @@ type RedLight struct{}
 
 func (g RedLight) Enter() {
 	fmt.Println("Red light is on. Stop driving.")
-	time.Sleep(time.Second * 5)
+
 }
 func (g RedLight) Exit() {}
 func (g RedLight) Update(l *StateMachine) {
@@ -50,7 +49,7 @@ type GreenLight struct{}
 
 func (g GreenLight) Enter() {
 	fmt.Println("Green light is on. You can drive.")
-	time.Sleep(time.Second * 5)
+
 }
 func (g GreenLight) Exit() {}
 func (g GreenLight) Update(l *StateMachine) {
@@ -61,10 +60,20 @@ type YellowLight struct{}
 
 func (g YellowLight) Enter() {
 	fmt.Println("Yellow light is on. Prepare to stop.")
-	time.Sleep(time.Second * 5)
+
 }
 func (g YellowLight) Exit() {}
 func (g YellowLight) Update(l *StateMachine) {
+	l.setState(&RedLight{})
+}
+
+type PurpleLight struct{}
+func (g PurpleLight) Enter() {
+	fmt.Println("Purple light is on. Prepare to stop.")
+
+}
+func (g PurpleLight) Exit() {}
+func (g PurpleLight) Update(l *StateMachine) {
 	l.setState(&RedLight{})
 }
 
