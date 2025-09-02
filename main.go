@@ -10,6 +10,39 @@ type State interface {
 	Update(l *StateMachine)
 }
 
+type RobotPosition struct {
+	xpos int64
+	ypos int64
+}
+
+func NewRobotPosition(xpos int64, ypos int64) RobotPosition {
+	pos := new(RobotPosition)
+	pos.xpos = xpos
+	pos.ypos = ypos
+	return *pos
+}
+
+type Direction int
+
+const ( // note : directions are clockwise
+	North Direction = iota
+	East
+	South
+	West
+)
+
+type RobotDetails struct {
+	position RobotPosition
+	facing   Direction
+}
+
+func NewRobotDetails(position RobotPosition, facing Direction) RobotDetails {
+	pos := new(RobotDetails)
+	pos.position = position
+	pos.facing = facing
+	return *pos
+}
+
 type StateMachine struct {
 	currentState State
 	states       map[string]State
