@@ -11,6 +11,7 @@ type State interface {
 }
 
 type StateRobot int
+
 const (
 	Open StateRobot = iota
 	InProgress
@@ -50,7 +51,6 @@ const ( // note : directions are clockwise
 	West
 )
 
-
 type RobotDetails struct {
 	position RobotPosition
 	facing   Direction
@@ -64,9 +64,9 @@ func NewRobotDetails(position RobotPosition, facing Direction) RobotDetails {
 }
 
 type StateMachine struct {
-	currentState State
-	states       map[string]State
-		currentStateData StateData
+	currentState     State
+	states           map[string]State
+	currentStateData StateData
 	planet           [50][50]bool
 }
 
@@ -75,11 +75,28 @@ func NewStateMachine(initialState State) *StateMachine {
 		currentState: initialState,
 		states:       make(map[string]State),
 	}
-	pos := NewRobotPosition(10,10)
-	det := NewRobotDetails(pos,North)
-	sm.currentStateData = NewStateData(Open,det)
+	pos := NewRobotPosition(10, 10)
+	det := NewRobotDetails(pos, North)
+	sm.currentStateData = NewStateData(Open, det)
 	sm.currentState.Enter()
 	return sm
+}
+func NewStateMachine2(initialState RobotDetails) *StateMachine {
+	sm := &StateMachine{
+		currentState: &GreenLight{},
+		states:       make(map[string]State),
+	}
+	pos := NewRobotPosition(10, 10)
+	det := NewRobotDetails(pos, North)
+	sm.currentStateData = NewStateData(Open, det)
+	sm.currentState.Enter()
+	return sm
+}
+func turnLeft(detail RobotDetails) RobotDetails {
+	val := NewRobotDetails(detail.position, detail.facing)
+	newDirection := []Direction{West, North, East, South}
+	val.facing = newDirection[val.facing]
+	return val
 }
 
 func (sm *StateMachine) setState(s State) {
@@ -125,6 +142,7 @@ func (g YellowLight) Update(l *StateMachine) {
 }
 
 type PurpleLight struct{}
+
 func (g PurpleLight) Enter() {
 	fmt.Println("Purple light is on. Prepare to stop.")
 
@@ -136,8 +154,8 @@ func (g PurpleLight) Update(l *StateMachine) {
 
 func main() {
 	sm := NewStateMachine(&GreenLight{})
-
-	for {
-		sm.Transition()
-	}
+	sm.Transition()
+	// for {
+	// 	sm.Transition()
+	// }
 }
