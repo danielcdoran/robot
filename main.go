@@ -23,9 +23,9 @@ type StateData struct {
 	position RobotDetails
 }
 
-func NewStateData(state StateRobot, pos RobotDetails) StateData {
+func NewStateData(pos RobotDetails) StateData {
 	object := new(StateData)
-	object.state = state
+	// object.state = state
 	object.position = pos
 	return *object
 }
@@ -99,13 +99,25 @@ func NewStateMachine(initialState RobotDetails) *StateMachine {
 		currentState: &Action{},
 		states:       make(map[string]State),
 	}
-	sm.currentStateData = NewStateData(Open, initialState)
+	sm.currentStateData = NewStateData(initialState)
 	return sm
 }
+func NewStateMachineNoStartPosition() *StateMachine {
+	sm := &StateMachine{
+		currentState: &Action{},
+		states:       make(map[string]State),
+	}
+	// sm.currentStateData = NewStateData(Open, initialState)
+	return sm
+}
+
 func (p StateMachine) String() string {
 	return fmt.Sprintf("%v", p.currentStateData)
 }
 
+func (p StateMachine) RobotInitialPosition(initialPosition RobotDetails) {
+	p.currentStateData.position = initialPosition
+}
 func (p StateMachine) OutputRobotPosition() string {
 	return p.currentStateData.OutputRobotPosition()
 }
@@ -199,8 +211,8 @@ func (g Action) TurnLeft(l *StateMachine) {
 func main() {
 	pos := NewRobotPosition(10, 10)
 	det := NewRobotDetails(pos, North)
-	sm := NewStateMachine(det)
-
+	sm := NewStateMachineNoStartPosition()
+	sm.RobotInitialPosition(det)
 	sm.TurnLeft()
 	fmt.Println(sm)
 	sm.TurnRight()
