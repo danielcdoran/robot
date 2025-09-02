@@ -62,6 +62,9 @@ func NewRobotDetails(position RobotPosition, facing Direction) RobotDetails {
 	pos.facing = facing
 	return *pos
 }
+func (p RobotDetails) String() string {
+	return fmt.Sprintf("%v (%v years)", p.position, p.facing)
+}
 
 type StateMachine struct {
 	currentState     State
@@ -70,17 +73,6 @@ type StateMachine struct {
 	planet           [50][50]bool
 }
 
-//	func NewStateMachine(initialState State) *StateMachine {
-//		sm := &StateMachine{
-//			currentState: initialState,
-//			states:       make(map[string]State),
-//		}
-//		pos := NewRobotPosition(10, 10)
-//		det := NewRobotDetails(pos, North)
-//		sm.currentStateData = NewStateData(Open, det)
-//		// sm.currentState.MoveInDirection(l * StateMachine)
-//		return sm
-//	}
 func NewStateMachine(initialState RobotDetails) *StateMachine {
 	sm := &StateMachine{
 		currentState: &GreenLight{},
@@ -90,6 +82,10 @@ func NewStateMachine(initialState RobotDetails) *StateMachine {
 	// sm.currentState.MoveInDirection(l * StateMachine)
 	return sm
 }
+func (p StateMachine) String() string {
+	return fmt.Sprintf("%v", p.currentStateData)
+}
+
 func turnLeft(detail RobotDetails) RobotDetails {
 	val := NewRobotDetails(detail.position, detail.facing)
 	newDirection := []Direction{West, North, East, South}
@@ -117,8 +113,14 @@ func (sm *StateMachine) setState(s State) {
 	// sm.currentState.MoveInDirection(l.currentStateData.position)
 }
 
-func (sm *StateMachine) Transition() {
+func (sm *StateMachine) TurnLeft() {
 	sm.currentState.TurnLeft(sm)
+}
+func (sm *StateMachine) TurnRight() {
+	sm.currentState.TurnRight(sm)
+}
+func (sm *StateMachine) MoveInDirection() {
+	sm.currentState.MoveInDirection(sm)
 }
 
 type RedLight struct{}
@@ -181,8 +183,11 @@ func main() {
 	pos := NewRobotPosition(10, 10)
 	det := NewRobotDetails(pos, North)
 	sm := NewStateMachine(det)
-	sm.Transition()
-	// for {
-	// 	sm.Transition()
-	// }
+
+	sm.TurnLeft()
+	fmt.Println(sm)
+	sm.TurnRight()
+	fmt.Println(sm)
+	sm.MoveInDirection()
+	fmt.Println(sm)
 }
