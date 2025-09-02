@@ -70,7 +70,7 @@ type StateMachine struct {
 	currentState     State
 	states           map[string]State
 	currentStateData StateData
-	planet           [50][50]bool
+	planetScent      [50][50]bool // false - no scent
 }
 
 func NewStateMachine(initialState RobotDetails) *StateMachine {
@@ -79,11 +79,14 @@ func NewStateMachine(initialState RobotDetails) *StateMachine {
 		states:       make(map[string]State),
 	}
 	sm.currentStateData = NewStateData(Open, initialState)
-	// sm.currentState.MoveInDirection(l * StateMachine)
 	return sm
 }
 func (p StateMachine) String() string {
 	return fmt.Sprintf("%v", p.currentStateData)
+}
+func (p *StateMachine) hasScent() bool {
+	val := p.planetScent[p.currentStateData.position.position.xpos][p.currentStateData.position.position.ypos]
+	return val
 }
 
 func turnLeft(detail RobotDetails) RobotDetails {
@@ -100,18 +103,44 @@ func turnRight(detail RobotDetails) RobotDetails {
 	return val
 }
 
-func moveInDirection(detail RobotDetails) RobotDetails {
+// If position is scented ie  true then no movement is allowed
+// If new position is outside area then no movement and setto scented
+func moveInDirection(detail RobotDetails, outsideArea *bool) RobotDetails {
 	val := NewRobotDetails(detail.position, detail.facing)
 	xadd := []int64{0, 1, 0, -1}
 	yadd := []int64{1, 0, -1, 0}
-	val.position.xpos = val.position.xpos + xadd[val.facing]
-	val.position.ypos = val.position.ypos + yadd[val.facing]
+	newxpos := val.position.xpos + xadd[val.facing]
+	newypos := val.position.ypos + yadd[val.facing]
+	if isOutsideArea(newxpos, newypos) {
+		*outsideArea = true
+		return val
+	}
+	*outsideArea = false
+	val.position.xpos = newxpos
+	val.position.ypos = newypos
 	return val
 }
-func (sm *StateMachine) setState(s State) {
-	sm.currentState = s
-	// sm.currentState.MoveInDirection(l.currentStateData.position)
+
+func isOutsideArea(xpos int64, ypos int64) bool {
+	if xpos < 0 {
+		return true
+	}
+	if xpos > 50 {
+
+		return true
+	}
+	if ypos < 0 {
+		return true
+	}
+	if ypos > 50 {
+		return true
+	}
+	return false
 }
+
+// func (sm *StateMachine) setState(s State) {
+// 	sm.currentState = s
+// }
 
 func (sm *StateMachine) TurnLeft() {
 	sm.currentState.TurnLeft(sm)
@@ -120,28 +149,20 @@ func (sm *StateMachine) TurnRight() {
 	sm.currentState.TurnRight(sm)
 }
 func (sm *StateMachine) MoveInDirection() {
+	if sm.hasScent() {
+		return // no movement allowed
+	}
 	sm.currentState.MoveInDirection(sm)
 }
-
-// type RedLight struct{}
-
-// func (g RedLight) MoveInDirection(l *StateMachine) {
-// 	fmt.Println("Red light is on. Stop driving.")
-// 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
-// }
-// func (g RedLight) TurnRight(l *StateMachine) {
-// 	l.currentStateData.position = turnRight(l.currentStateData.position)
-// }
-// func (g RedLight) TurnLeft(l *StateMachine) {
-// 	l.setState(&GreenLight{})
-// 	l.currentStateData.position = turnLeft(l.currentStateData.position)
-// }
 
 type Action struct{}
 
 func (g Action) MoveInDirection(l *StateMachine) {
-	fmt.Println("Green light is on. You can drive.")
-	l.currentStateData.position = moveInDirection(l.currentStateData.position)
+	var outSideArea bool
+	l.currentStateData.position = moveInDirection(l.currentStateData.position, &outSideArea)
+	if outSideArea {
+		l.planetScent[l.currentStateData.position.position.xpos][l.currentStateData.position.position.ypos] = true
+	}
 }
 func (g Action) TurnRight(l *StateMachine) {
 	l.currentStateData.position = turnRight(l.currentStateData.position)
@@ -149,34 +170,6 @@ func (g Action) TurnRight(l *StateMachine) {
 func (g Action) TurnLeft(l *StateMachine) {
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
-
-// type YellowLight struct{}
-
-// func (g YellowLight) MoveInDirection(l *StateMachine) {
-// 	fmt.Println("Yellow light is on. Prepare to stop.")
-// 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
-// }
-// func (g YellowLight) TurnRight(l *StateMachine) {
-// 	l.currentStateData.position = turnRight(l.currentStateData.position)
-// }
-// func (g YellowLight) TurnLeft(l *StateMachine) {
-// 	l.setState(&RedLight{})
-// 	l.currentStateData.position = turnLeft(l.currentStateData.position)
-// }
-
-// type PurpleLight struct{}
-
-// func (g PurpleLight) MoveInDirection(l *StateMachine) {
-// 	fmt.Println("Purple light is on. Prepare to stop.")
-// 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
-// }
-// func (g PurpleLight) TurnRight(l *StateMachine) {
-// 	l.currentStateData.position = turnRight(l.currentStateData.position)
-// }
-// func (g PurpleLight) TurnLeft(l *StateMachine) {
-// 	l.setState(&RedLight{})
-// 	l.currentStateData.position = turnLeft(l.currentStateData.position)
-// }
 
 func main() {
 	pos := NewRobotPosition(10, 10)
