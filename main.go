@@ -75,7 +75,7 @@ type StateMachine struct {
 
 func NewStateMachine(initialState RobotDetails) *StateMachine {
 	sm := &StateMachine{
-		currentState: &GreenLight{},
+		currentState: &Action{},
 		states:       make(map[string]State),
 	}
 	sm.currentStateData = NewStateData(Open, initialState)
@@ -123,61 +123,60 @@ func (sm *StateMachine) MoveInDirection() {
 	sm.currentState.MoveInDirection(sm)
 }
 
-type RedLight struct{}
+// type RedLight struct{}
 
-func (g RedLight) MoveInDirection(l *StateMachine) {
-	fmt.Println("Red light is on. Stop driving.")
-	l.currentStateData.position = moveInDirection(l.currentStateData.position)
-}
-func (g RedLight) TurnRight(l *StateMachine) {
-	l.currentStateData.position = turnRight(l.currentStateData.position)
-}
-func (g RedLight) TurnLeft(l *StateMachine) {
-	l.setState(&GreenLight{})
-	l.currentStateData.position = turnLeft(l.currentStateData.position)
-}
+// func (g RedLight) MoveInDirection(l *StateMachine) {
+// 	fmt.Println("Red light is on. Stop driving.")
+// 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
+// }
+// func (g RedLight) TurnRight(l *StateMachine) {
+// 	l.currentStateData.position = turnRight(l.currentStateData.position)
+// }
+// func (g RedLight) TurnLeft(l *StateMachine) {
+// 	l.setState(&GreenLight{})
+// 	l.currentStateData.position = turnLeft(l.currentStateData.position)
+// }
 
-type GreenLight struct{}
+type Action struct{}
 
-func (g GreenLight) MoveInDirection(l *StateMachine) {
+func (g Action) MoveInDirection(l *StateMachine) {
 	fmt.Println("Green light is on. You can drive.")
 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
 }
-func (g GreenLight) TurnRight(l *StateMachine) {
+func (g Action) TurnRight(l *StateMachine) {
 	l.currentStateData.position = turnRight(l.currentStateData.position)
 }
-func (g GreenLight) TurnLeft(l *StateMachine) {
-	l.setState(&YellowLight{})
+func (g Action) TurnLeft(l *StateMachine) {
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
 
-type YellowLight struct{}
+// type YellowLight struct{}
 
-func (g YellowLight) MoveInDirection(l *StateMachine) {
-	fmt.Println("Yellow light is on. Prepare to stop.")
-	l.currentStateData.position = moveInDirection(l.currentStateData.position)
-}
-func (g YellowLight) TurnRight(l *StateMachine) {
-	l.currentStateData.position = turnRight(l.currentStateData.position)
-}
-func (g YellowLight) TurnLeft(l *StateMachine) {
-	l.setState(&RedLight{})
-	l.currentStateData.position = turnLeft(l.currentStateData.position)
-}
+// func (g YellowLight) MoveInDirection(l *StateMachine) {
+// 	fmt.Println("Yellow light is on. Prepare to stop.")
+// 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
+// }
+// func (g YellowLight) TurnRight(l *StateMachine) {
+// 	l.currentStateData.position = turnRight(l.currentStateData.position)
+// }
+// func (g YellowLight) TurnLeft(l *StateMachine) {
+// 	l.setState(&RedLight{})
+// 	l.currentStateData.position = turnLeft(l.currentStateData.position)
+// }
 
-type PurpleLight struct{}
+// type PurpleLight struct{}
 
-func (g PurpleLight) MoveInDirection(l *StateMachine) {
-	fmt.Println("Purple light is on. Prepare to stop.")
-	l.currentStateData.position = moveInDirection(l.currentStateData.position)
-}
-func (g PurpleLight) TurnRight(l *StateMachine) {
-	l.currentStateData.position = turnRight(l.currentStateData.position)
-}
-func (g PurpleLight) TurnLeft(l *StateMachine) {
-	l.setState(&RedLight{})
-	l.currentStateData.position = turnLeft(l.currentStateData.position)
-}
+// func (g PurpleLight) MoveInDirection(l *StateMachine) {
+// 	fmt.Println("Purple light is on. Prepare to stop.")
+// 	l.currentStateData.position = moveInDirection(l.currentStateData.position)
+// }
+// func (g PurpleLight) TurnRight(l *StateMachine) {
+// 	l.currentStateData.position = turnRight(l.currentStateData.position)
+// }
+// func (g PurpleLight) TurnLeft(l *StateMachine) {
+// 	l.setState(&RedLight{})
+// 	l.currentStateData.position = turnLeft(l.currentStateData.position)
+// }
 
 func main() {
 	pos := NewRobotPosition(10, 10)
