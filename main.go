@@ -117,6 +117,7 @@ func (g RedLight) Enter() {
 func (g RedLight) Exit() {}
 func (g RedLight) Update(l *StateMachine) {
 	l.setState(&GreenLight{})
+	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
 
 type GreenLight struct{}
@@ -128,17 +129,18 @@ func (g GreenLight) Enter() {
 func (g GreenLight) Exit() {}
 func (g GreenLight) Update(l *StateMachine) {
 	l.setState(&YellowLight{})
+	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
 
 type YellowLight struct{}
 
 func (g YellowLight) Enter() {
 	fmt.Println("Yellow light is on. Prepare to stop.")
-
 }
 func (g YellowLight) Exit() {}
 func (g YellowLight) Update(l *StateMachine) {
 	l.setState(&RedLight{})
+	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
 
 type PurpleLight struct{}
@@ -150,6 +152,7 @@ func (g PurpleLight) Enter() {
 func (g PurpleLight) Exit() {}
 func (g PurpleLight) Update(l *StateMachine) {
 	l.setState(&RedLight{})
+	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
 
 func main() {
