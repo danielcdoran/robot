@@ -7,7 +7,7 @@ import (
 type State interface {
 	Enter()
 	Exit()
-	Update(l *StateMachine)
+	TurnLeft(l *StateMachine)
 }
 
 type StateRobot int
@@ -105,7 +105,7 @@ func (sm *StateMachine) setState(s State) {
 }
 
 func (sm *StateMachine) Transition() {
-	sm.currentState.Update(sm)
+	sm.currentState.TurnLeft(sm)
 }
 
 type RedLight struct{}
@@ -115,7 +115,7 @@ func (g RedLight) Enter() {
 
 }
 func (g RedLight) Exit() {}
-func (g RedLight) Update(l *StateMachine) {
+func (g RedLight) TurnLeft(l *StateMachine) {
 	l.setState(&GreenLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
@@ -127,7 +127,7 @@ func (g GreenLight) Enter() {
 
 }
 func (g GreenLight) Exit() {}
-func (g GreenLight) Update(l *StateMachine) {
+func (g GreenLight) TurnLeft(l *StateMachine) {
 	l.setState(&YellowLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
@@ -138,7 +138,7 @@ func (g YellowLight) Enter() {
 	fmt.Println("Yellow light is on. Prepare to stop.")
 }
 func (g YellowLight) Exit() {}
-func (g YellowLight) Update(l *StateMachine) {
+func (g YellowLight) TurnLeft(l *StateMachine) {
 	l.setState(&RedLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
@@ -150,7 +150,7 @@ func (g PurpleLight) Enter() {
 
 }
 func (g PurpleLight) Exit() {}
-func (g PurpleLight) Update(l *StateMachine) {
+func (g PurpleLight) TurnLeft(l *StateMachine) {
 	l.setState(&RedLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
 }
