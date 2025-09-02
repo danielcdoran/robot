@@ -75,7 +75,9 @@ func NewStateMachine(initialState State) *StateMachine {
 		currentState: initialState,
 		states:       make(map[string]State),
 	}
-
+	pos := NewRobotPosition(10,10)
+	det := NewRobotDetails(pos,North)
+	sm.currentStateData = NewStateData(Open,det)
 	sm.currentState.Enter()
 	return sm
 }
