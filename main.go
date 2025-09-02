@@ -6,7 +6,7 @@ import (
 
 type State interface {
 	Enter()
-	Exit()
+	TurnRight(l *StateMachine)
 	TurnLeft(l *StateMachine)
 }
 
@@ -99,6 +99,12 @@ func turnLeft(detail RobotDetails) RobotDetails {
 	return val
 }
 
+func turnRight(detail RobotDetails) RobotDetails {
+	val := NewRobotDetails(detail.position, detail.facing)
+	newDirection := []Direction{East, South, West, North}
+	val.facing = newDirection[val.facing]
+	return val
+}
 func (sm *StateMachine) setState(s State) {
 	sm.currentState = s
 	sm.currentState.Enter()
@@ -114,7 +120,9 @@ func (g RedLight) Enter() {
 	fmt.Println("Red light is on. Stop driving.")
 
 }
-func (g RedLight) Exit() {}
+func (g RedLight) TurnRight(l *StateMachine) {
+	l.currentStateData.position = turnRight(l.currentStateData.position)
+}
 func (g RedLight) TurnLeft(l *StateMachine) {
 	l.setState(&GreenLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
@@ -126,7 +134,9 @@ func (g GreenLight) Enter() {
 	fmt.Println("Green light is on. You can drive.")
 
 }
-func (g GreenLight) Exit() {}
+func (g GreenLight) TurnRight(l *StateMachine) {
+	l.currentStateData.position = turnRight(l.currentStateData.position)
+}
 func (g GreenLight) TurnLeft(l *StateMachine) {
 	l.setState(&YellowLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
@@ -137,7 +147,9 @@ type YellowLight struct{}
 func (g YellowLight) Enter() {
 	fmt.Println("Yellow light is on. Prepare to stop.")
 }
-func (g YellowLight) Exit() {}
+func (g YellowLight) TurnRight(l *StateMachine) {
+	l.currentStateData.position = turnRight(l.currentStateData.position)
+}
 func (g YellowLight) TurnLeft(l *StateMachine) {
 	l.setState(&RedLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
@@ -149,7 +161,9 @@ func (g PurpleLight) Enter() {
 	fmt.Println("Purple light is on. Prepare to stop.")
 
 }
-func (g PurpleLight) Exit() {}
+func (g PurpleLight) TurnRight(l *StateMachine) {
+	l.currentStateData.position = turnRight(l.currentStateData.position)
+}
 func (g PurpleLight) TurnLeft(l *StateMachine) {
 	l.setState(&RedLight{})
 	l.currentStateData.position = turnLeft(l.currentStateData.position)
