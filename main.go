@@ -29,6 +29,9 @@ func NewStateData(state StateRobot, pos RobotDetails) StateData {
 	object.position = pos
 	return *object
 }
+func (p StateData) OutputRobotPosition() string {
+	return p.position.OutputRobotPosition()
+}
 
 type RobotPosition struct {
 	xpos int64
@@ -63,7 +66,25 @@ func NewRobotDetails(position RobotPosition, facing Direction) RobotDetails {
 	return *pos
 }
 func (p RobotDetails) String() string {
-	return fmt.Sprintf("%v (%v years)", p.position, p.facing)
+	return fmt.Sprintf("%v %v", p.position, p.facing)
+}
+
+func (p RobotDetails) OutputRobotPosition() string {
+	var direction string
+	switch p.facing {
+
+	case 0:
+		direction = "N"
+	case 1:
+		direction = "E"
+	case 2:
+		direction = "S"
+	case 3:
+		direction = "W"
+	default:
+		fmt.Println("Direction %s not in facing list", p.facing)
+	}
+	return fmt.Sprintf("%d %d %s", p.position.xpos, p.position.ypos, direction)
 }
 
 type StateMachine struct {
@@ -83,6 +104,10 @@ func NewStateMachine(initialState RobotDetails) *StateMachine {
 }
 func (p StateMachine) String() string {
 	return fmt.Sprintf("%v", p.currentStateData)
+}
+
+func (p StateMachine) OutputRobotPosition() string {
+	return p.currentStateData.OutputRobotPosition()
 }
 func (p *StateMachine) hasScent() bool {
 	val := p.planetScent[p.currentStateData.position.position.xpos][p.currentStateData.position.position.ypos]
@@ -182,4 +207,6 @@ func main() {
 	fmt.Println(sm)
 	sm.MoveInDirection()
 	fmt.Println(sm)
+	fmt.Println()
+	fmt.Println(sm.OutputRobotPosition())
 }
