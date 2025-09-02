@@ -5,7 +5,7 @@ import (
 )
 
 type State interface {
-	Enter()
+	MoveInDirection(l *StateMachine)
 	TurnRight(l *StateMachine)
 	TurnLeft(l *StateMachine)
 }
@@ -70,26 +70,24 @@ type StateMachine struct {
 	planet           [50][50]bool
 }
 
-func NewStateMachine(initialState State) *StateMachine {
-	sm := &StateMachine{
-		currentState: initialState,
-		states:       make(map[string]State),
-	}
-	pos := NewRobotPosition(10, 10)
-	det := NewRobotDetails(pos, North)
-	sm.currentStateData = NewStateData(Open, det)
-	sm.currentState.Enter()
-	return sm
-}
-func NewStateMachine2(initialState RobotDetails) *StateMachine {
+//	func NewStateMachine(initialState State) *StateMachine {
+//		sm := &StateMachine{
+//			currentState: initialState,
+//			states:       make(map[string]State),
+//		}
+//		pos := NewRobotPosition(10, 10)
+//		det := NewRobotDetails(pos, North)
+//		sm.currentStateData = NewStateData(Open, det)
+//		// sm.currentState.MoveInDirection(l * StateMachine)
+//		return sm
+//	}
+func NewStateMachine(initialState RobotDetails) *StateMachine {
 	sm := &StateMachine{
 		currentState: &GreenLight{},
 		states:       make(map[string]State),
 	}
-	pos := NewRobotPosition(10, 10)
-	det := NewRobotDetails(pos, North)
-	sm.currentStateData = NewStateData(Open, det)
-	sm.currentState.Enter()
+	sm.currentStateData = NewStateData(Open, initialState)
+	// sm.currentState.MoveInDirection(l * StateMachine)
 	return sm
 }
 func turnLeft(detail RobotDetails) RobotDetails {
@@ -116,7 +114,7 @@ func moveInDirection(detail RobotDetails) RobotDetails {
 }
 func (sm *StateMachine) setState(s State) {
 	sm.currentState = s
-	sm.currentState.Enter()
+	// sm.currentState.MoveInDirection(l.currentStateData.position)
 }
 
 func (sm *StateMachine) Transition() {
@@ -125,9 +123,9 @@ func (sm *StateMachine) Transition() {
 
 type RedLight struct{}
 
-func (g RedLight) Enter() {
+func (g RedLight) MoveInDirection(l *StateMachine) {
 	fmt.Println("Red light is on. Stop driving.")
-
+	l.currentStateData.position = moveInDirection(l.currentStateData.position)
 }
 func (g RedLight) TurnRight(l *StateMachine) {
 	l.currentStateData.position = turnRight(l.currentStateData.position)
@@ -139,9 +137,9 @@ func (g RedLight) TurnLeft(l *StateMachine) {
 
 type GreenLight struct{}
 
-func (g GreenLight) Enter() {
+func (g GreenLight) MoveInDirection(l *StateMachine) {
 	fmt.Println("Green light is on. You can drive.")
-
+	l.currentStateData.position = moveInDirection(l.currentStateData.position)
 }
 func (g GreenLight) TurnRight(l *StateMachine) {
 	l.currentStateData.position = turnRight(l.currentStateData.position)
@@ -153,8 +151,9 @@ func (g GreenLight) TurnLeft(l *StateMachine) {
 
 type YellowLight struct{}
 
-func (g YellowLight) Enter() {
+func (g YellowLight) MoveInDirection(l *StateMachine) {
 	fmt.Println("Yellow light is on. Prepare to stop.")
+	l.currentStateData.position = moveInDirection(l.currentStateData.position)
 }
 func (g YellowLight) TurnRight(l *StateMachine) {
 	l.currentStateData.position = turnRight(l.currentStateData.position)
@@ -166,9 +165,9 @@ func (g YellowLight) TurnLeft(l *StateMachine) {
 
 type PurpleLight struct{}
 
-func (g PurpleLight) Enter() {
+func (g PurpleLight) MoveInDirection(l *StateMachine) {
 	fmt.Println("Purple light is on. Prepare to stop.")
-
+	l.currentStateData.position = moveInDirection(l.currentStateData.position)
 }
 func (g PurpleLight) TurnRight(l *StateMachine) {
 	l.currentStateData.position = turnRight(l.currentStateData.position)
@@ -179,7 +178,9 @@ func (g PurpleLight) TurnLeft(l *StateMachine) {
 }
 
 func main() {
-	sm := NewStateMachine(&GreenLight{})
+	pos := NewRobotPosition(10, 10)
+	det := NewRobotDetails(pos, North)
+	sm := NewStateMachine(det)
 	sm.Transition()
 	// for {
 	// 	sm.Transition()
