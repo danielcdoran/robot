@@ -58,36 +58,36 @@ func NewStateMachine(initialState State) *StateMachine {
 	// }
 
 	sm.actions[North] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = West },
+		TurnLeft:  func() { /* sm.currentState = West */ },
 		TurnRight: func() { sm.currentState = West },
 	}
 	sm.actions[East] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = North },
+		TurnLeft:  func() { /* sm.currentState = North */ },
 		TurnRight: func() { sm.currentState = West },
 	}
 	sm.actions[South] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = East },
+		TurnLeft:  func() { /* sm.currentState = East */ },
 		TurnRight: func() { sm.currentState = West },
 	}
 	sm.actions[West] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = South },
+		TurnLeft:  func() { /* sm.currentState = South */ },
 		TurnRight: func() { sm.currentState = West },
 	}
 
 	sm.actions[East] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = North },
+		TurnLeft:  func() { /* sm.currentState = North */ },
 		TurnRight: func() { sm.currentState = North },
 	}
 	sm.actions[South] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = East },
+		TurnLeft:  func() { /* sm.currentState = East */ },
 		TurnRight: func() { sm.currentState = North },
 	}
 	sm.actions[North] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = North },
+		TurnLeft:  func() { /* sm.currentState = North */ },
 		TurnRight: func() { sm.currentState = North },
 	}
 	sm.actions[West] = map[Event]Action{
-		TurnLeft:  func() { sm.currentState = East },
+		TurnLeft:  func() { /* sm.currentState = East */ },
 		TurnRight: func() { sm.currentState = North },
 	}
 
@@ -104,12 +104,15 @@ func (sm *StateMachine) SendEvent(event Event) {
 		fmt.Println("Invalid transition")
 	}
 }
+func (p StateMachine) String() string {
+	return fmt.Sprintf("Facing %v ", p.currentState)
+}
 
 func main() {
 	sm := NewStateMachine(North)
-	fmt.Println(sm.currentState)
+	fmt.Println(sm)
 	sm.SendEvent(TurnLeft)
-	fmt.Println(sm.currentState)
+	fmt.Println(sm)
 	sm.SendEvent(TurnLeft)
 	// sm.SendEvent(Move)
 }
