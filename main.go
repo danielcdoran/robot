@@ -35,16 +35,20 @@ func NewStateMachine(initialState State) *StateMachine {
 	}
 
 	sm.transitions[North] = map[Event]State{
-		TurnLeft: West,
+		TurnLeft:  West,
+		TurnRight: West,
 	}
 	sm.transitions[East] = map[Event]State{
-		TurnLeft: North,
+		TurnLeft:  North,
+		TurnRight: West,
 	}
 	sm.transitions[South] = map[Event]State{
-		TurnLeft: East,
+		TurnLeft:  East,
+		TurnRight: West,
 	}
 	sm.transitions[West] = map[Event]State{
-		TurnLeft: South,
+		TurnLeft:  South,
+		TurnRight: West,
 	}
 	// sm.transitions[East] = map[Event]State{
 	// 	TurnRight: South,
