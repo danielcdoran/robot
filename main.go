@@ -39,58 +39,43 @@ func NewStateMachine(initialState State, pos Position) *StateMachine {
 	sm.transitions[North] = map[Event]State{
 		TurnLeft:  West,
 		TurnRight: East,
+		Move:      North,
 	}
 	sm.transitions[East] = map[Event]State{
 		TurnLeft:  North,
 		TurnRight: South,
+		Move:      East,
 	}
 	sm.transitions[South] = map[Event]State{
 		TurnLeft:  East,
 		TurnRight: West,
+		Move:      South,
 	}
 	sm.transitions[West] = map[Event]State{
 		TurnLeft:  South,
 		TurnRight: North,
+		Move:      West,
 	}
-	// sm.transitions[East] = map[Event]State{
-	// 	TurnRight: South,
-	// }
-	// sm.transitions[South] = map[Event]State{
-	// 	Move: North,
-	// }
 
 	sm.actions[North] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = West */ },
 		TurnRight: func() { /* sm.currentState = West */ },
+		Move:      func() { sm.position.ypos = sm.position.ypos + 1 },
 	}
 	sm.actions[East] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = North */ },
 		TurnRight: func() { /* sm.currentState = West */ },
+		Move:      func() { sm.position.xpos = sm.position.xpos + 1 },
 	}
 	sm.actions[South] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = East */ },
 		TurnRight: func() { /* sm.currentState = West */ },
+		Move:      func() { sm.position.ypos = sm.position.ypos - 1 },
 	}
 	sm.actions[West] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = South */ },
 		TurnRight: func() { /* sm.currentState = West */ },
-	}
-
-	sm.actions[East] = map[Event]Action{
-		TurnLeft:  func() { /* sm.currentState = North */ },
-		TurnRight: func() { /* sm.currentState = North */ },
-	}
-	sm.actions[South] = map[Event]Action{
-		TurnLeft:  func() { /* sm.currentState = East */ },
-		TurnRight: func() { /* sm.currentState = North */ },
-	}
-	sm.actions[North] = map[Event]Action{
-		TurnLeft:  func() { /* sm.currentState = North */ },
-		TurnRight: func() { /* sm.currentState = North */ },
-	}
-	sm.actions[West] = map[Event]Action{
-		TurnLeft:  func() { /* sm.currentState = East */ },
-		TurnRight: func() { /* sm.currentState = North */ },
+		Move:      func() { sm.position.xpos = sm.position.xpos - 1 },
 	}
 
 	return sm
@@ -129,5 +114,6 @@ func main() {
 	sm.SendEvent(TurnRight)
 	fmt.Println(sm)
 	sm.SendEvent(TurnRight)
-	// sm.SendEvent(Move)
+	sm.SendEvent(Move)
+	fmt.Println(sm)
 }
