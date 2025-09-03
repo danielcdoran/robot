@@ -55,7 +55,7 @@ func TestTurnRightStartNorth(t *testing.T) {
 
 	expected := NewRobotDetails(pos, East)
 	if expected != result {
-		t.Errorf("Expected Left turn result %+v different from result  position %+v", expected, result)
+		t.Errorf("Expected right turn result %+v different from result  position %+v", expected, result)
 	}
 }
 
@@ -95,7 +95,8 @@ func TestTurnRightStartWest(t *testing.T) {
 func TestMoveNorth(t *testing.T) {
 	pos := NewRobotPosition(10, 10)
 	northFacing := NewRobotDetails(pos, North)
-	result := moveInDirection(northFacing)
+	var outSideArea bool
+	result := moveInDirection(northFacing, &outSideArea)
 
 	expectedPos := NewRobotPosition(10, 11)
 	expected := NewRobotDetails(expectedPos, North)
@@ -107,7 +108,8 @@ func TestMoveNorth(t *testing.T) {
 func TestMoveEast(t *testing.T) {
 	pos := NewRobotPosition(10, 10)
 	eastFacing := NewRobotDetails(pos, East)
-	result := moveInDirection(eastFacing)
+	var outSideArea bool
+	result := moveInDirection(eastFacing, &outSideArea)
 	expectedPos := NewRobotPosition(11, 10)
 	expected := NewRobotDetails(expectedPos, East)
 	if expected != result {
@@ -118,7 +120,8 @@ func TestMoveEast(t *testing.T) {
 func TestMoveSouth(t *testing.T) {
 	pos := NewRobotPosition(10, 10)
 	southFacing := NewRobotDetails(pos, South)
-	result := moveInDirection(southFacing)
+	var outSideArea bool
+	result := moveInDirection(southFacing, &outSideArea)
 	expectedPos := NewRobotPosition(10, 9)
 	expected := NewRobotDetails(expectedPos, South)
 	if expected != result {
@@ -129,7 +132,8 @@ func TestMoveSouth(t *testing.T) {
 func TestMoveWest(t *testing.T) {
 	pos := NewRobotPosition(10, 10)
 	westFacing := NewRobotDetails(pos, West)
-	result := moveInDirection(westFacing)
+	var outSideArea bool
+	result := moveInDirection(westFacing, &outSideArea)
 	expectedPos := NewRobotPosition(9, 10)
 	expected := NewRobotDetails(expectedPos, West)
 	if expected != result {
