@@ -7,6 +7,8 @@ import (
 func TestMoveNorth(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(North, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := North
@@ -22,6 +24,8 @@ func TestMoveNorth(t *testing.T) {
 func TestMoveEast(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(East, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := East
@@ -36,6 +40,8 @@ func TestMoveEast(t *testing.T) {
 func TestMoveSouth(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(South, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := South
@@ -50,6 +56,8 @@ func TestMoveSouth(t *testing.T) {
 func TestMoveWest(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(West, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := West

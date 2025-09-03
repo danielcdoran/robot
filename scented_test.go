@@ -5,9 +5,11 @@ import (
 )
 
 func TestMoveXLessThan0(t *testing.T) {
+	posTopRight := NewPosition(49, 49)
 	pos := NewPosition(0, 0)
 	sm := NewStateMachine(West, pos)
-	sm.SendEvent(Move)
+	sm.SetTopRightCorner(posTopRight)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := West
 	if expected != result {
@@ -23,9 +25,11 @@ func TestMoveXLessThan0(t *testing.T) {
 }
 
 func TestMoveYLessThan0(t *testing.T) {
+	posTopRight := NewPosition(49, 49)
 	pos := NewPosition(49, 0)
 	sm := NewStateMachine(South, pos)
-	sm.SendEvent(Move)
+	sm.SetTopRightCorner(posTopRight)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := South
 	if expected != result {
@@ -43,7 +47,8 @@ func TestMoveYLessThan0(t *testing.T) {
 func TestMoveYGTThan50(t *testing.T) {
 	pos := NewPosition(49, 49)
 	sm := NewStateMachine(North, pos)
-	sm.SendEvent(Move)
+	sm.SetTopRightCorner(pos)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := North
 	if expected != result {
@@ -61,7 +66,8 @@ func TestMoveYGTThan50(t *testing.T) {
 func TestMoveXGTThan50(t *testing.T) {
 	pos := NewPosition(49, 49)
 	sm := NewStateMachine(East, pos)
-	sm.SendEvent(Move)
+	sm.SetTopRightCorner(pos)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := East
 	if expected != result {

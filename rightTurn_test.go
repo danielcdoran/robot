@@ -7,6 +7,8 @@ import (
 func TestTurnRightStartNorth(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(North, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(TurnRight)
 	result := sm.currentState
 	expected := East
@@ -17,6 +19,8 @@ func TestTurnRightStartNorth(t *testing.T) {
 func TestTurnRightStartEast(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(East, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(TurnRight)
 	result := sm.currentState
 	expected := South
@@ -27,6 +31,8 @@ func TestTurnRightStartEast(t *testing.T) {
 func TestTurnRightStartSouth(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(South, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(TurnRight)
 	result := sm.currentState
 	expected := West
@@ -37,6 +43,8 @@ func TestTurnRightStartSouth(t *testing.T) {
 func TestTurnRightStartWest(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(West, pos)
+	posTopRight := NewPosition(49, 49)
+	sm.SetTopRightCorner(posTopRight)
 	sm.SendEvent(TurnRight)
 	result := sm.currentState
 	expected := North
