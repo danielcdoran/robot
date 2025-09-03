@@ -20,12 +20,14 @@ const (
 )
 
 type Action func()
+type Scented [50][50]bool
 
 type StateMachine struct {
 	currentState State
 	transitions  map[State]map[Event]State
 	actions      map[State]map[Event]Action
 	position     Position
+	planetScent  Scented // false - no scent
 }
 
 func NewStateMachine(initialState State, pos Position) *StateMachine {
@@ -60,22 +62,38 @@ func NewStateMachine(initialState State, pos Position) *StateMachine {
 	sm.actions[North] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = West */ },
 		TurnRight: func() { /* sm.currentState = West */ },
-		Move:      func() { sm.position.ypos = sm.position.ypos + 1 },
+		Move: func() {
+			newpos := NewPositionCopy(sm.position)
+			newpos.ypos = newpos.ypos + 1
+			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+		},
 	}
 	sm.actions[East] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = North */ },
 		TurnRight: func() { /* sm.currentState = West */ },
-		Move:      func() { sm.position.xpos = sm.position.xpos + 1 },
+		Move: func() {
+			newpos := NewPositionCopy(sm.position)
+			newpos.xpos = newpos.xpos + 1
+			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+		},
 	}
 	sm.actions[South] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = East */ },
 		TurnRight: func() { /* sm.currentState = West */ },
-		Move:      func() { sm.position.ypos = sm.position.ypos - 1 },
+		Move: func() {
+			newpos := NewPositionCopy(sm.position)
+			newpos.ypos = newpos.ypos - 1
+			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+		},
 	}
 	sm.actions[West] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = South */ },
 		TurnRight: func() { /* sm.currentState = West */ },
-		Move:      func() { sm.position.xpos = sm.position.xpos - 1 },
+		Move: func() {
+			newpos := NewPositionCopy(sm.position)
+			newpos.xpos = newpos.xpos - 1
+			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+		},
 	}
 
 	return sm
@@ -105,6 +123,43 @@ func NewPosition(xpos int64, ypos int64) Position {
 	pos.xpos = xpos
 	pos.ypos = ypos
 	return *pos
+}
+
+// Copy contructor
+func NewPositionCopy(pos Position) Position {
+	newPos := new(Position)
+	newPos.xpos = pos.xpos
+	newPos.ypos = pos.ypos
+	return *newPos
+}
+
+func isOutsideArea(pos Position) bool {
+	xpos := pos.xpos
+	ypos := pos.ypos
+	if xpos <= 0 {
+		return true
+	}
+	if xpos >= 50 {
+
+		return true
+	}
+	if ypos <= 0 {
+		return true
+	}
+	if ypos >= 50 {
+		return true
+	}
+	return false
+}
+func checkScented(scented *Scented, pos Position, movedPos Position) Position {
+	if scented[pos.xpos][pos.ypos] {
+		return pos
+	}
+	if isOutsideArea(movedPos) {
+		scented[pos.xpos][pos.ypos] = true
+		return pos
+	}
+	return movedPos
 }
 
 func main() {
