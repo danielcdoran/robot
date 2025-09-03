@@ -30,11 +30,12 @@ type Action func()
 type Scented [50][50]bool
 
 type StateMachine struct {
-	currentState State
-	transitions  map[State]map[Event]State
-	actions      map[State]map[Event]Action
-	position     Position
-	planetScent  Scented // false - no scent
+	currentState   State
+	transitions    map[State]map[Event]State
+	actions        map[State]map[Event]Action
+	position       Position
+	planetScent    Scented // false - no scent
+	topRightCorner Position
 }
 
 func NewStateMachine(initialState State, pos Position) *StateMachine {
@@ -88,7 +89,7 @@ func NewStateMachineSetStart() *StateMachine {
 		Forward: func() {
 			newpos := NewPositionCopy(sm.position)
 			newpos.ypos = newpos.ypos + 1
-			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+			sm.position = sm.checkScented(sm.position, newpos)
 		},
 	}
 	sm.actions[East] = map[Event]Action{
@@ -97,7 +98,7 @@ func NewStateMachineSetStart() *StateMachine {
 		Forward: func() {
 			newpos := NewPositionCopy(sm.position)
 			newpos.xpos = newpos.xpos + 1
-			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+			sm.position = sm.checkScented(sm.position, newpos)
 		},
 	}
 	sm.actions[South] = map[Event]Action{
@@ -106,7 +107,7 @@ func NewStateMachineSetStart() *StateMachine {
 		Forward: func() {
 			newpos := NewPositionCopy(sm.position)
 			newpos.ypos = newpos.ypos - 1
-			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+			sm.position = sm.checkScented(sm.position, newpos)
 		},
 	}
 	sm.actions[West] = map[Event]Action{
@@ -115,7 +116,7 @@ func NewStateMachineSetStart() *StateMachine {
 		Forward: func() {
 			newpos := NewPositionCopy(sm.position)
 			newpos.xpos = newpos.xpos - 1
-			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
+			sm.position = sm.checkScented(sm.position, newpos)
 		},
 	}
 
@@ -126,6 +127,10 @@ func (sm *StateMachine) InitialPosition(state State, pos Position) {
 	sm.currentState = state
 	sm.position = pos
 }
+func (sm *StateMachine) SetTopRightCorner(pos Position) {
+	sm.topRightCorner = pos
+}
+
 func (sm *StateMachine) SendEvent(event Event) {
 	if newState, ok := sm.transitions[sm.currentState][event]; ok {
 		sm.currentState = newState
@@ -138,6 +143,16 @@ func (sm *StateMachine) SendEvent(event Event) {
 }
 func (p StateMachine) String() string {
 	return fmt.Sprintf("Facing %s  (%v,%v)", statetoLetter(p.currentState), p.position.xpos, p.position.ypos)
+}
+func (p *StateMachine) checkScented(pos Position, movedPos Position) Position {
+	if p.planetScent[pos.xpos][pos.ypos] {
+		return pos
+	}
+	if isOutsideArea(movedPos) {
+		p.planetScent[pos.xpos][pos.ypos] = true
+		return pos
+	}
+	return movedPos
 }
 
 type Position struct {
@@ -178,7 +193,7 @@ func isOutsideArea(pos Position) bool {
 	}
 	return false
 }
-func checkScented(scented *Scented, pos Position, movedPos Position) Position {
+func checkScented2(scented *Scented, pos Position, movedPos Position) Position {
 	if scented[pos.xpos][pos.ypos] {
 		return pos
 	}
@@ -203,20 +218,27 @@ func readLines(path string) ([]string, error) {
 	}
 	return lines, scanner.Err()
 }
-
-func getPosition(input string) (Position, State) {
+func getPosition(input string) Position {
 	parts := strings.Split(input, " ")
 	xpos, err := strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
-
 	ypos, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
 	pos := NewPosition(xpos, ypos)
+	return pos
+}
 
+func getLine1OfInput(input string) Position {
+	pos := getPosition(input)
+	return pos
+}
+func getLine2OfInput(input string) (Position, State) {
+	pos := getPosition(input)
+	parts := strings.Split(input, " ")
 	state := letterToState(parts[2])
 	return pos, state
 }
@@ -250,8 +272,10 @@ func statetoLetter(input State) string {
 
 func runCommands(input []string) {
 	sm := NewStateMachineSetStart()
+	topRightCorner := getLine1OfInput(input[0])
+	sm.SetTopRightCorner(topRightCorner)
 	for i := 1; i < len(input); i = i + 2 {
-		pos, state := getPosition(input[i])
+		pos, state := getLine2OfInput(input[i])
 		sm.InitialPosition(state, pos)
 		commands := input[i+1]
 		for j := 0; j < len(commands); j++ {
