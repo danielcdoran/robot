@@ -25,13 +25,15 @@ type StateMachine struct {
 	currentState State
 	transitions  map[State]map[Event]State
 	actions      map[State]map[Event]Action
+	position     Position
 }
 
-func NewStateMachine(initialState State) *StateMachine {
+func NewStateMachine(initialState State, pos Position) *StateMachine {
 	sm := &StateMachine{
 		currentState: initialState,
 		transitions:  make(map[State]map[Event]State),
 		actions:      make(map[State]map[Event]Action),
+		position:     pos,
 	}
 
 	sm.transitions[North] = map[Event]State{
@@ -105,11 +107,24 @@ func (sm *StateMachine) SendEvent(event Event) {
 	}
 }
 func (p StateMachine) String() string {
-	return fmt.Sprintf("Facing %v ", p.currentState)
+	return fmt.Sprintf("Facing %v  (%v,%v)", p.currentState, p.position.xpos, p.position.ypos)
+}
+
+type Position struct {
+	xpos int64
+	ypos int64
+}
+
+func NewPosition(xpos int64, ypos int64) Position {
+	pos := new(Position)
+	pos.xpos = xpos
+	pos.ypos = ypos
+	return *pos
 }
 
 func main() {
-	sm := NewStateMachine(North)
+	pos := NewPosition(10, 10)
+	sm := NewStateMachine(North, pos)
 	fmt.Println(sm)
 	sm.SendEvent(TurnRight)
 	fmt.Println(sm)
