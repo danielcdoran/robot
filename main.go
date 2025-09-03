@@ -36,11 +36,11 @@ func NewStateMachine(initialState State) *StateMachine {
 
 	sm.transitions[North] = map[Event]State{
 		TurnLeft:  West,
-		TurnRight: West,
+		TurnRight: East,
 	}
 	sm.transitions[East] = map[Event]State{
 		TurnLeft:  North,
-		TurnRight: West,
+		TurnRight: South,
 	}
 	sm.transitions[South] = map[Event]State{
 		TurnLeft:  East,
@@ -48,7 +48,7 @@ func NewStateMachine(initialState State) *StateMachine {
 	}
 	sm.transitions[West] = map[Event]State{
 		TurnLeft:  South,
-		TurnRight: West,
+		TurnRight: North,
 	}
 	// sm.transitions[East] = map[Event]State{
 	// 	TurnRight: South,
@@ -59,36 +59,36 @@ func NewStateMachine(initialState State) *StateMachine {
 
 	sm.actions[North] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = West */ },
-		TurnRight: func() { sm.currentState = West },
+		TurnRight: func() { /* sm.currentState = West */ },
 	}
 	sm.actions[East] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = North */ },
-		TurnRight: func() { sm.currentState = West },
+		TurnRight: func() { /* sm.currentState = West */ },
 	}
 	sm.actions[South] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = East */ },
-		TurnRight: func() { sm.currentState = West },
+		TurnRight: func() { /* sm.currentState = West */ },
 	}
 	sm.actions[West] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = South */ },
-		TurnRight: func() { sm.currentState = West },
+		TurnRight: func() { /* sm.currentState = West */ },
 	}
 
 	sm.actions[East] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = North */ },
-		TurnRight: func() { sm.currentState = North },
+		TurnRight: func() { /* sm.currentState = North */ },
 	}
 	sm.actions[South] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = East */ },
-		TurnRight: func() { sm.currentState = North },
+		TurnRight: func() { /* sm.currentState = North */ },
 	}
 	sm.actions[North] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = North */ },
-		TurnRight: func() { sm.currentState = North },
+		TurnRight: func() { /* sm.currentState = North */ },
 	}
 	sm.actions[West] = map[Event]Action{
 		TurnLeft:  func() { /* sm.currentState = East */ },
-		TurnRight: func() { sm.currentState = North },
+		TurnRight: func() { /* sm.currentState = North */ },
 	}
 
 	return sm
@@ -111,8 +111,8 @@ func (p StateMachine) String() string {
 func main() {
 	sm := NewStateMachine(North)
 	fmt.Println(sm)
-	sm.SendEvent(TurnLeft)
+	sm.SendEvent(TurnRight)
 	fmt.Println(sm)
-	sm.SendEvent(TurnLeft)
+	sm.SendEvent(TurnRight)
 	// sm.SendEvent(Move)
 }
