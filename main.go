@@ -44,6 +44,17 @@ func NewStateMachine(initialState State, pos Position) *StateMachine {
 	return sm
 }
 
+// All the state changes and commands are defined in transitions an actions
+// sm.transitions[North] = map[Event]State{
+// 	TurnLeft:  West,
+// 	TurnRight: East,
+// 	Forward:   North,
+// }
+// Starting from "North" state there is an entry for each command. The resultant state is to the righjt of the ":"
+// Each of these transitions needs a function to be applied when the state is changed. This is in sm.actions.const
+// Some of the functions have a body. These are the movement ones where we are updating "sented"
+// The Turn commands only change state. so they opnly  need a null command
+
 func NewStateMachineSetStart() *StateMachine {
 	sm := &StateMachine{
 		transitions: make(map[State]map[Event]State),
@@ -111,74 +122,6 @@ func NewStateMachineSetStart() *StateMachine {
 	return sm
 }
 
-// func NewStateMachine(initialState State, pos Position) *StateMachine {
-// 	sm := &StateMachine{
-// 		currentState: initialState,
-// 		transitions:  make(map[State]map[Event]State),
-// 		actions:      make(map[State]map[Event]Action),
-// 		position:     pos,
-// 	}
-
-// 	sm.transitions[North] = map[Event]State{
-// 		TurnLeft:  West,
-// 		TurnRight: East,
-// 		Forward:   North,
-// 	}
-// 	sm.transitions[East] = map[Event]State{
-// 		TurnLeft:  North,
-// 		TurnRight: South,
-// 		Forward:   East,
-// 	}
-// 	sm.transitions[South] = map[Event]State{
-// 		TurnLeft:  East,
-// 		TurnRight: West,
-// 		Forward:   South,
-// 	}
-// 	sm.transitions[West] = map[Event]State{
-// 		TurnLeft:  South,
-// 		TurnRight: North,
-// 		Forward:   West,
-// 	}
-
-// 	sm.actions[North] = map[Event]Action{
-// 		TurnLeft:  func() { /* sm.currentState = West */ },
-// 		TurnRight: func() { /* sm.currentState = West */ },
-// 		Forward: func() {
-// 			newpos := NewPositionCopy(sm.position)
-// 			newpos.ypos = newpos.ypos + 1
-// 			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
-// 		},
-// 	}
-// 	sm.actions[East] = map[Event]Action{
-// 		TurnLeft:  func() { /* sm.currentState = North */ },
-// 		TurnRight: func() { /* sm.currentState = West */ },
-// 		Forward: func() {
-// 			newpos := NewPositionCopy(sm.position)
-// 			newpos.xpos = newpos.xpos + 1
-// 			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
-// 		},
-// 	}
-// 	sm.actions[South] = map[Event]Action{
-// 		TurnLeft:  func() { /* sm.currentState = East */ },
-// 		TurnRight: func() { /* sm.currentState = West */ },
-// 		Forward: func() {
-// 			newpos := NewPositionCopy(sm.position)
-// 			newpos.ypos = newpos.ypos - 1
-// 			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
-// 		},
-// 	}
-// 	sm.actions[West] = map[Event]Action{
-// 		TurnLeft:  func() { /* sm.currentState = South */ },
-// 		TurnRight: func() { /* sm.currentState = West */ },
-// 		Forward: func() {
-// 			newpos := NewPositionCopy(sm.position)
-// 			newpos.xpos = newpos.xpos - 1
-// 			sm.position = checkScented(&sm.planetScent, sm.position, newpos)
-// 		},
-// 	}
-
-//		return sm
-//	}
 func (sm *StateMachine) InitialPosition(state State, pos Position) {
 	sm.currentState = state
 	sm.position = pos
@@ -194,7 +137,7 @@ func (sm *StateMachine) SendEvent(event Event) {
 	}
 }
 func (p StateMachine) String() string {
-	return fmt.Sprintf("Facing %v  (%v,%v)", p.currentState, p.position.xpos, p.position.ypos)
+	return fmt.Sprintf("Facing %s  (%v,%v)", statetoLetter(p.currentState), p.position.xpos, p.position.ypos)
 }
 
 type Position struct {
@@ -291,6 +234,19 @@ func letterToState(input string) State {
 	}
 	return 0
 }
+func statetoLetter(input State) string {
+	switch input {
+	case 0:
+		return "N"
+	case 1:
+		return "E"
+	case 2:
+		return "S"
+	case 3:
+		return "W"
+	}
+	return "X"
+}
 
 func runCommands(input []string) {
 	sm := NewStateMachineSetStart()
@@ -309,7 +265,7 @@ func runCommands(input []string) {
 				sm.SendEvent(Forward)
 			}
 		}
-		fmt.Println("Commands  %s produce position  %s", commands, sm.String())
+		fmt.Println("Commands ", commands, sm.String())
 	}
 
 }
