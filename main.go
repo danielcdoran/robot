@@ -142,13 +142,17 @@ func (sm *StateMachine) SendEvent(event Event) {
 	}
 }
 func (p StateMachine) String() string {
-	return fmt.Sprintf("Facing %s  (%v,%v)", statetoLetter(p.currentState), p.position.xpos, p.position.ypos)
+	output := fmt.Sprintf("Facing %s  (%v,%v)", statetoLetter(p.currentState), p.position.xpos, p.position.ypos)
+	if p.planetScent[p.position.xpos][p.position.ypos] {
+		return output + " Loss"
+	}
+	return output
 }
 func (p *StateMachine) checkScented(pos Position, movedPos Position) Position {
 	if p.planetScent[pos.xpos][pos.ypos] {
 		return pos
 	}
-	if isOutsideArea(movedPos) {
+	if isOutsideArea(movedPos, p.topRightCorner) {
 		p.planetScent[pos.xpos][pos.ypos] = true
 		return pos
 	}
@@ -175,33 +179,25 @@ func NewPositionCopy(pos Position) Position {
 	return *newPos
 }
 
-func isOutsideArea(pos Position) bool {
+func isOutsideArea(pos Position, topRight Position) bool {
 	xpos := pos.xpos
 	ypos := pos.ypos
-	if xpos <= 0 {
+	xtopRight := topRight.xpos
+	ytopRight := topRight.ypos
+	if xpos < 0 {
 		return true
 	}
-	if xpos >= 50 {
+	if xpos > xtopRight {
 
 		return true
 	}
-	if ypos <= 0 {
+	if ypos < 0 {
 		return true
 	}
-	if ypos >= 50 {
+	if ypos > ytopRight {
 		return true
 	}
 	return false
-}
-func checkScented2(scented *Scented, pos Position, movedPos Position) Position {
-	if scented[pos.xpos][pos.ypos] {
-		return pos
-	}
-	if isOutsideArea(movedPos) {
-		scented[pos.xpos][pos.ypos] = true
-		return pos
-	}
-	return movedPos
 }
 
 func readLines(path string) ([]string, error) {
