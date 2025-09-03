@@ -5,17 +5,17 @@ import "fmt"
 type State int
 
 const (
-	Open State = iota
-	InProgress
-	Closed
+	North State = iota
+	East
+	South
 )
 
 type Event int
 
 const (
-	StartProgress Event = iota
-	Close
-	Reopen
+	TurnLeft Event = iota
+	TurnRight
+	Move
 )
 
 type Action func()
@@ -33,24 +33,24 @@ func NewStateMachine(initialState State) *StateMachine {
 		actions:      make(map[State]map[Event]Action),
 	}
 
-	sm.transitions[Open] = map[Event]State{
-		StartProgress: InProgress,
+	sm.transitions[North] = map[Event]State{
+		TurnLeft: East,
 	}
-	sm.transitions[InProgress] = map[Event]State{
-		Close: Closed,
+	sm.transitions[East] = map[Event]State{
+		TurnRight: South,
 	}
-	sm.transitions[Closed] = map[Event]State{
-		Reopen: Open,
+	sm.transitions[South] = map[Event]State{
+		Move: North,
 	}
 
-	sm.actions[Open] = map[Event]Action{
-		StartProgress: func() { fmt.Println("Ticket is now in progress") },
+	sm.actions[North] = map[Event]Action{
+		TurnLeft: func() { sm.currentState = South },
 	}
-	sm.actions[InProgress] = map[Event]Action{
-		Close: func() { fmt.Println("Ticket is now closed") },
+	sm.actions[East] = map[Event]Action{
+		TurnRight: func() { sm.currentState = North },
 	}
-	sm.actions[Closed] = map[Event]Action{
-		Reopen: func() { fmt.Println("Ticket is reopened") },
+	sm.actions[South] = map[Event]Action{
+		Move: func() { sm.currentState = East },
 	}
 
 	return sm
@@ -68,8 +68,10 @@ func (sm *StateMachine) SendEvent(event Event) {
 }
 
 func main() {
-	sm := NewStateMachine(Open)
-	sm.SendEvent(StartProgress)
-	sm.SendEvent(Close)
-	sm.SendEvent(Reopen)
+	sm := NewStateMachine(North)
+	fmt.Println(sm.currentState)
+	sm.SendEvent(TurnLeft)
+	fmt.Println(sm.currentState)
+	sm.SendEvent(TurnRight)
+	sm.SendEvent(Move)
 }
