@@ -7,7 +7,7 @@ import (
 func TestMoveNorth(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(North, pos)
-	sm.SendEvent(Move)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := North
 	if expected != result {
@@ -22,7 +22,7 @@ func TestMoveNorth(t *testing.T) {
 func TestMoveEast(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(East, pos)
-	sm.SendEvent(Move)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := East
 	if expected != result {
@@ -36,7 +36,7 @@ func TestMoveEast(t *testing.T) {
 func TestMoveSouth(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(South, pos)
-	sm.SendEvent(Move)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := South
 	if expected != result {
@@ -50,7 +50,7 @@ func TestMoveSouth(t *testing.T) {
 func TestMoveWest(t *testing.T) {
 	pos := NewPosition(10, 10)
 	sm := NewStateMachine(West, pos)
-	sm.SendEvent(Move)
+	sm.SendEvent(Forward)
 	result := sm.currentState
 	expected := West
 	if expected != result {
