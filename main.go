@@ -150,12 +150,13 @@ func (p StateMachine) String() string {
 }
 func (p *StateMachine) checkScented(pos Position, movedPos Position) Position {
 	if p.planetScent[pos.xpos][pos.ypos] {
-		return pos
+		if isOutsideArea(movedPos, p.topRightCorner) {
+			return pos
+		} else {
+			return movedPos
+		}
 	}
-	if isOutsideArea(movedPos, p.topRightCorner) {
-		p.planetScent[pos.xpos][pos.ypos] = true
-		return pos
-	}
+	p.planetScent[pos.xpos][pos.ypos] = isOutsideArea(movedPos, p.topRightCorner)
 	return movedPos
 }
 
